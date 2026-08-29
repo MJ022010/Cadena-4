@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Cadena - Elige tu número</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #111827,
+                    #1e3a8a
+                );
+
+            color: white;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 20px;
+
+        }
+
+
+        .container {
+
+            width: 100%;
+
+            max-width: 850px;
+
+            text-align: center;
+
+        }
+
+
+        h1 {
+
+            font-size: 42px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .subtitle {
+
+            color: #cbd5e1;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .connection {
+
+            display: inline-block;
+
+            padding: 7px 14px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(255,255,255,0.1);
+
+            color: #cbd5e1;
+
+            font-size: 13px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .online {
+
+            color: #86efac;
+
+        }
+
+
+        .offline {
+
+            color: #fca5a5;
+
+        }
+
+
+        .name-box {
+
+            margin-bottom: 20px;
+
+        }
+
+
+        input {
+
+            width: 100%;
+
+            max-width: 350px;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            font-size: 17px;
+
+            outline: none;
+
+            text-align: center;
+
+        }
+
+
+        .get-number {
+
+            margin-top: 12px;
+
+            padding: 14px 28px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #22c55e;
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+
+        .get-number:hover {
+
+            background: #16a34a;
+
+            transform: translateY(-2px);
+
+        }
+
+
+        .get-number:disabled {
+
+            background: #64748b;
+
+            cursor: wait;
+
+            transform: none;
+
+        }
+
+
+        .numbers {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, 1fr);
+
+            gap: 15px;
+
+            margin-top: 30px;
+
+        }
+
+
+        .number {
+
+            min-height: 125px;
+
+            border-radius: 18px;
+
+            background: #22c55e;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-size: 35px;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+
+        }
+
+
+        .number.taken {
+
+            background: #dc2626;
+
+        }
+
+
+        .number.empty {
+
+            background: #22c55e;
+
+        }
+
+
+        .number.mine {
+
+            background: #2563eb;
+
+            box-shadow:
+                0 0 0 3px #93c5fd;
+
+        }
+
+
+        .status {
+
+            font-size: 13px;
+
+            margin-top: 8px;
+
+            font-weight: normal;
+
+            max-width: 95%;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+        }
+
+
+        .message {
+
+            min-height: 25px;
+
+            margin-top: 20px;
+
+            font-weight: bold;
+
+        }
+
+
+        .success {
+
+            color: #86efac;
+
+        }
+
+
+        .error {
+
+            color: #fca5a5;
+
+        }
+
+
+        .info {
+
+            color: #bfdbfe;
+
+        }
+
+
+        .admin {
+
+            margin-top: 30px;
+
+        }
+
+
+        .reset {
+
+            padding: 12px 24px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #f59e0b;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .reset:hover {
+
+            background: #d97706;
+
+        }
+
+
+        @media (max-width: 650px) {
+
+            h1 {
+
+                font-size: 30px;
+
+            }
+
+
+            .numbers {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+
+            .number {
+
+                min-height: 110px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <h1>🎯 Cadena</h1>
+
+
+    <p class="subtitle">
+
+        Escribe tu nombre y recibe un número
+        aleatorio.
+
+    </p>
+
+
+    <div
+        id="connection"
+        class="connection"
+    >
+
+        🟡 Conectando con Firebase...
+
+    </div>
+
+
+    <div class="name-box">
+
+
+        <input
+            id="name"
+            type="text"
+            maxlength="30"
+            placeholder="Escribe tu nombre"
+            autocomplete="off"
+        >
+
+
+        <br>
+
+
+        <button
+            id="getNumber"
+            class="get-number"
+        >
+
+            🎲 Obtener mi número
+
+        </button>
+
+
+    </div>
+
+
+    <div
+        id="message"
+        class="message"
+    ></div>
+
+
+    <div
+        id="numbers"
+        class="numbers"
+    ></div>
+
+
+    <div class="admin">
+
+        <button
+            id="reset"
+            class="reset"
+        >
+
+            🔐 Reiniciar números
+
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<script type="module">
+
+
+    /*
+    =====================================================
+    FIREBASE
+    =====================================================
+    */
+
+
+    import {
+        initializeApp
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+
+    import {
+        getDatabase,
+        ref,
+        onValue,
+        runTransaction,
+        set
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+
+
+    import {
+        getAuth,
+        signInAnonymously,
+        onAuthStateChanged,
+        signInWithEmailAndPassword
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+
+
+    /*
+    =====================================================
+    CONFIGURACIÓN DE TU FIREBASE
+    =====================================================
+    */
+
+
+    const firebaseConfig = {
+
+        apiKey:
+        "AIzaSyCYIYwFo9-gl3q47tdqACGVVcRzmM65n8w",
+
+        authDomain:
+        "cadena-ruleta.firebaseapp.com",
+
+        databaseURL:
+        "https://cadena-ruleta-default-rtdb.firebaseio.com",
+
+        projectId:
+        "cadena-ruleta",
+
+        storageBucket:
+        "cadena-ruleta.firebasestorage.app",
+
+        messagingSenderId:
+        "380159257406",
+
+        appId:
+        "1:380159257406:web:7a4b2f99e122aad4549a6f"
+
+    };
+
+
+
+    /*
+    =====================================================
+    INICIALIZAR
+    =====================================================
+    */
+
+
+    const app =
+        initializeApp(firebaseConfig);
+
+
+    const database =
+        getDatabase(app);
+
+
+    const auth =
+        getAuth(app);
+
+
+    const numbersRef =
+        ref(database, "numbers");
+
+
+    const connectedRef =
+        ref(database, ".info/connected");
+
+
+
+    /*
+    =====================================================
+    ELEMENTOS
+    =====================================================
+    */
+
+
+    const nameInput =
+        document.getElementById("name");
+
+
+    const getNumberButton =
+        document.getElementById("getNumber");
+
+
+    const resetButton =
+        document.getElementById("reset");
+
+
+    const numbersContainer =
+        document.getElementById("numbers");
+
+
+    const message =
+        document.getElementById("message");
+
+
+    const connection =
+        document.getElementById("connection");
+
+
+
+    /*
+    =====================================================
+    VARIABLES
+    =====================================================
+    */
+
+
+    let currentUser = null;
+
+
+    let takenNumbers = {};
+
+
+
+    /*
+    =====================================================
+    AUTENTICACIÓN ANÓNIMA
+    =====================================================
+    */
+
+
+    signInAnonymously(auth)
+
+        .catch((error) => {
+
+            console.error(
+                "Error de autenticación:",
+                error
+            );
+
+
+            showMessage(
+                "❌ No se pudo conectar con Firebase.",
+                "error"
+            );
+
+        });
+
+
+
+    /*
+    =====================================================
+    SABER QUIÉN ESTÁ AUTENTICADO
+    =====================================================
+    */
+
+
+    onAuthStateChanged(
+        auth,
+        (user) => {
+
+            currentUser = user;
+
+
+            if (user) {
+
+                console.log(
+                    "Usuario Firebase:",
+                    user.uid
+                );
+
+                getNumberButton.disabled = false;
+
+            }
+
+        }
+    );
+
+
+
+    /*
+    =====================================================
+    CONEXIÓN
+    =====================================================
+    */
+
+
+    onValue(
+        connectedRef,
+        (snapshot) => {
+
+            if (snapshot.val() === true) {
+
+                connection.textContent =
+                    "🟢 Conectado — sincronización activa";
+
+                connection.className =
+                    "connection online";
+
+            }
+
+            else {
+
+                connection.textContent =
+                    "🔴 Sin conexión";
+
+                connection.className =
+                    "connection offline";
+
+            }
+
+        }
+    );
+
+
+
+    /*
+    =====================================================
+    LEER LOS NÚMEROS EN TIEMPO REAL
+    =====================================================
+    */
+
+
+    onValue(
+        numbersRef,
+        (snapshot) => {
+
+            takenNumbers =
+                snapshot.val() || {};
+
+            drawNumbers();
+
+        },
+
+        (error) => {
+
+            console.error(error);
+
+            showMessage(
+                "❌ Firebase rechazó la lectura. Revisa las Rules.",
+                "error"
+            );
+
+        }
+    );
+
+
+
+    /*
+    =====================================================
+    DIBUJAR LOS 10 NÚMEROS
+    =====================================================
+    */
+
+
+    function drawNumbers() {
+
+        numbersContainer.innerHTML = "";
+
+
+        for (
+            let number = 1;
+            number <= 10;
+            number++
+        ) {
+
+
+            const box =
+                document.createElement("div");
+
+
+            box.className =
+                "number";
+
+
+            const data =
+                takenNumbers[number];
+
+
+            if (data) {
+
+                box.classList.add("taken");
+
+
+                if (
+                    currentUser &&
+                    data.uid === currentUser.uid
+                ) {
+
+                    box.classList.add("mine");
+
+                }
+
+
+                box.innerHTML = `
+
+                    ${number}
+
+                    <span class="status">
+
+                        🔒 ${escapeHtml(data.name)}
+
+                    </span>
+
+                `;
+
+            }
+
+            else {
+
+                box.classList.add("empty");
+
+
+                box.innerHTML = `
+
+                    ${number}
+
+                    <span class="status">
+
+                        DISPONIBLE
+
+                    </span>
+
+                `;
+
+            }
+
+
+            numbersContainer.appendChild(box);
+
+        }
+
+    }
+
+
+
+    /*
+    =====================================================
+    OBTENER NÚMERO ALEATORIO
+    =====================================================
+    */
+
+
+    getNumberButton.addEventListener(
+        "click",
+        getRandomNumber
+    );
+
+
+
+    async function getRandomNumber() {
+
+
+        const name =
+            nameInput.value.trim();
+
+
+        if (!name) {
+
+            showMessage(
+                "⚠️ Escribe tu nombre primero.",
+                "error"
+            );
+
+            nameInput.focus();
+
+            return;
+
+        }
+
+
+        if (!currentUser) {
+
+            showMessage(
+                "⏳ Conectando con Firebase...",
+                "info"
+            );
+
+            return;
+
+        }
+
+
+        /*
+        ================================================
+        Comprobar si esta persona ya tiene un número
+        ================================================
+        */
+
+
+        for (
+            const number in takenNumbers
+        ) {
+
+            if (
+                takenNumbers[number].uid ===
+                currentUser.uid
+            ) {
+
+                showMessage(
+                    `Ya tienes el número ${number}.`,
+                    "info"
+                );
+
+                return;
+
+            }
+
+        }
+
+
+        /*
+        ================================================
+        Buscar números disponibles
+        ================================================
+        */
+
+
+        const available = [];
+
+
+        for (
+            let number = 1;
+            number <= 10;
+            number++
+        ) {
+
+            if (!takenNumbers[number]) {
+
+                available.push(number);
+
+            }
+
+        }
+
+
+        if (available.length === 0) {
+
+            showMessage(
+                "😢 Todos los números ya fueron tomados.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /*
+        ================================================
+        ELEGIR UNO ALEATORIAMENTE
+        ================================================
+        */
+
+
+        const randomIndex =
+            Math.floor(
+                Math.random() *
+                available.length
+            );
+
+
+        const selectedNumber =
+            available[randomIndex];
+
+
+        getNumberButton.disabled = true;
+
+
+        getNumberButton.textContent =
+            "⏳ Asignando...";
+
+
+        /*
+        ================================================
+        TRANSACTION
+
+        Si otra persona toma ese número justo antes,
+        Firebase vuelve a ejecutar la transacción y
+        evitamos sobrescribirla.
+        ================================================
+        */
+
+
+        const numberRef =
+            ref(
+                database,
+                "numbers/" +
+                selectedNumber
+            );
+
+
+        try {
+
+
+            const result =
+                await runTransaction(
+
+                    numberRef,
+
+                    (currentData) => {
+
+
+                        if (
+                            currentData !== null
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        return {
+
+                            name: name,
+
+                            uid:
+                                currentUser.uid,
+
+                            timestamp:
+                                Date.now()
+
+                        };
+
+                    }
+
+                );
+
+
+            if (
+                result.committed
+            ) {
+
+                showMessage(
+                    `🎉 ¡Listo! Tu número es el ${selectedNumber}.`,
+                    "success"
+                );
+
+
+                nameInput.value = "";
+
+
+            }
+
+            else {
+
+                showMessage(
+                    "Ese número fue tomado. Inténtalo nuevamente.",
+                    "error"
+                );
+
+            }
+
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+
+            showMessage(
+                "❌ Error al asignar el número.",
+                "error"
+            );
+
+        }
+
+
+        getNumberButton.disabled = false;
+
+
+        getNumberButton.textContent =
+            "🎲 Obtener mi número";
+
+    }
+
+
+
+    /*
+    =====================================================
+    ADMINISTRADOR
+    =====================================================
+    */
+
+
+    resetButton.addEventListener(
+        "click",
+        adminLogin
+    );
+
+
+
+    async function adminLogin() {
+
+
+        const email =
+            prompt(
+                "📧 Email del administrador:"
+            );
+
+
+        if (!email) return;
+
+
+        const password =
+            prompt(
+                "🔐 Contraseña del administrador:"
+            );
+
+
+        if (!password) return;
+
+
+        try {
+
+
+            const credential =
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+
+            /*
+            ============================================
+            Verificar email
+            ============================================
+            */
+
+
+            if (
+                credential.user.email !==
+                "marcojosue022010@gmail.com"
+            ) {
+
+                showMessage(
+                    "❌ Esta cuenta no es administradora.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const confirmation =
+                confirm(
+                    "⚠️ ¿Seguro que quieres liberar TODOS los números?"
+                );
+
+
+            if (!confirmation) {
+
+                return;
+
+            }
+
+
+            await set(
+                numbersRef,
+                null
+            );
+
+
+            showMessage(
+                "✅ Todos los números fueron reiniciados.",
+                "success"
+            );
+
+
+            /*
+            Volver a autenticación anónima
+            después del reinicio.
+            */
+
+
+            await signInAnonymously(auth);
+
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+
+            showMessage(
+                "❌ Email o contraseña incorrectos.",
+                "error"
+            );
+
+        }
+
+    }
+
+
+
+    /*
+    =====================================================
+    MENSAJES
+    =====================================================
+    */
+
+
+    function showMessage(
+        text,
+        type
+    ) {
+
+        message.textContent =
+            text;
+
+
+        message.className =
+            "message " + type;
+
+
+        setTimeout(
+            () => {
+
+                message.textContent =
+                    "";
+
+                message.className =
+                    "message";
+
+            },
+            5000
+        );
+
+    }
+
+
+
+    /*
+    =====================================================
+    PROTEGER NOMBRES
+    =====================================================
+    */
+
+
+    function escapeHtml(text) {
+
+        const div =
+            document.createElement("div");
+
+
+        div.textContent =
+            text;
+
+
+        return div.innerHTML;
+
+    }
+
+
+
+    /*
+    =====================================================
+    ENTER = OBTENER NÚMERO
+    =====================================================
+    */
+
+
+    nameInput.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                getRandomNumber();
+
+            }
+
+        }
+    );
+
+
+</script>
+
+</body>
+
+</html>
