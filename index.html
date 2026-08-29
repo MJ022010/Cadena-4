@@ -1,0 +1,1224 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Elige tu número</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #111827,
+                    #1e3a8a
+                );
+
+            color: white;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 20px;
+        }
+
+
+        .container {
+
+            width: 100%;
+
+            max-width: 850px;
+
+            text-align: center;
+        }
+
+
+        h1 {
+
+            font-size: 42px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .subtitle {
+
+            color: #cbd5e1;
+
+            margin-bottom: 20px;
+        }
+
+
+        .connection {
+
+            display: inline-block;
+
+            padding: 7px 14px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(255,255,255,0.1);
+
+            color: #fbbf24;
+
+            font-size: 13px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .online {
+
+            color: #86efac;
+        }
+
+
+        .offline {
+
+            color: #fca5a5;
+        }
+
+
+        .name-box {
+
+            margin-bottom: 20px;
+        }
+
+
+        input {
+
+            width: 100%;
+
+            max-width: 350px;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            font-size: 17px;
+
+            outline: none;
+
+            text-align: center;
+        }
+
+
+        input:focus {
+
+            box-shadow:
+                0 0 0 3px
+                rgba(59,130,246,.5);
+        }
+
+
+        .claim {
+
+            border: none;
+
+            border-radius: 12px;
+
+            padding: 15px 30px;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            background: #2563eb;
+
+            color: white;
+
+            cursor: pointer;
+
+            margin-bottom: 30px;
+
+            transition: .2s;
+        }
+
+
+        .claim:hover {
+
+            background: #1d4ed8;
+
+            transform: translateY(-2px);
+        }
+
+
+        .claim:disabled {
+
+            background: #64748b;
+
+            cursor: not-allowed;
+
+            transform: none;
+        }
+
+
+        .numbers {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, 1fr);
+
+            gap: 15px;
+        }
+
+
+        .number {
+
+            min-height: 125px;
+
+            border: none;
+
+            border-radius: 18px;
+
+            background: #22c55e;
+
+            color: white;
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            padding: 10px;
+
+            transition: .2s;
+        }
+
+
+        .number.taken {
+
+            background: #dc2626;
+        }
+
+
+        .number.available {
+
+            background: #22c55e;
+        }
+
+
+        .status {
+
+            display: block;
+
+            font-size: 13px;
+
+            margin-top: 8px;
+
+            font-weight: normal;
+
+            word-break: break-word;
+        }
+
+
+        .message {
+
+            min-height: 25px;
+
+            margin: 20px 0;
+
+            font-weight: bold;
+        }
+
+
+        .success {
+
+            color: #86efac;
+        }
+
+
+        .error {
+
+            color: #fca5a5;
+        }
+
+
+        .admin {
+
+            margin-top: 25px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,.15);
+
+            padding-top: 20px;
+        }
+
+
+        .admin button {
+
+            border: none;
+
+            border-radius: 10px;
+
+            padding: 12px 22px;
+
+            background: #f59e0b;
+
+            color: white;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+        .admin button:hover {
+
+            background: #d97706;
+        }
+
+
+        @media (max-width: 650px) {
+
+            h1 {
+
+                font-size: 30px;
+            }
+
+
+            .numbers {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .number {
+
+                min-height: 105px;
+
+                font-size: 28px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <h1>
+        🎯 Elige tu número
+    </h1>
+
+
+    <p class="subtitle">
+
+        Escribe tu nombre y obtén
+        un número aleatorio.
+
+    </p>
+
+
+    <div
+        id="connection"
+        class="connection">
+
+        🟡 Conectando con Firebase...
+
+    </div>
+
+
+    <div class="name-box">
+
+        <input
+
+            id="name"
+
+            type="text"
+
+            maxlength="30"
+
+            autocomplete="off"
+
+            placeholder="Escribe tu nombre"
+
+        >
+
+    </div>
+
+
+    <button
+        id="claimButton"
+        class="claim">
+
+        🎲 Obtener mi número
+
+    </button>
+
+
+    <div
+        id="numbers"
+        class="numbers">
+
+    </div>
+
+
+    <div
+        id="message"
+        class="message">
+
+    </div>
+
+
+    <div class="admin">
+
+        <button id="adminButton">
+
+            🔐 Administración
+
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<script type="module">
+
+
+    /*
+    ========================================================
+    FIREBASE
+    ========================================================
+    */
+
+
+    import {
+        initializeApp
+    }
+
+    from
+    "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+
+    import {
+
+        getDatabase,
+
+        ref,
+
+        onValue,
+
+        runTransaction,
+
+        set,
+
+        remove
+
+    }
+
+    from
+    "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+
+
+    import {
+
+        getAuth,
+
+        signInAnonymously,
+
+        signInWithEmailAndPassword
+
+    }
+
+    from
+    "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+
+    import {
+
+        onAuthStateChanged
+
+    }
+
+    from
+    "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+
+
+    /*
+    ========================================================
+    CONFIGURACIÓN DE TU FIREBASE
+    ========================================================
+    */
+
+
+    const firebaseConfig = {
+
+        apiKey:
+            "AIzaSyCYIYwFo9-gl3q47tdqACCGVcRzmM65n8w",
+
+        authDomain:
+            "cadena-ruleta.firebaseapp.com",
+
+        databaseURL:
+            "https://cadena-ruleta-default-rtdb.firebaseio.com",
+
+        projectId:
+            "cadena-ruleta",
+
+        storageBucket:
+            "cadena-ruleta.firebasestorage.app",
+
+        messagingSenderId:
+            "380159257406",
+
+        appId:
+            "1:380159257406:web:7a4b2f99e122aad4549a6f"
+
+    };
+
+
+
+    /*
+    ========================================================
+    INICIALIZAR
+    ========================================================
+    */
+
+
+    const app =
+        initializeApp(firebaseConfig);
+
+
+    const database =
+        getDatabase(app);
+
+
+    const auth =
+        getAuth(app);
+
+
+    const numbersRef =
+        ref(database, "numbers");
+
+
+
+    /*
+    ========================================================
+    ELEMENTOS
+    ========================================================
+    */
+
+
+    const nameInput =
+        document.getElementById("name");
+
+
+    const claimButton =
+        document.getElementById("claimButton");
+
+
+    const numbersContainer =
+        document.getElementById("numbers");
+
+
+    const connection =
+        document.getElementById("connection");
+
+
+    const message =
+        document.getElementById("message");
+
+
+    const adminButton =
+        document.getElementById("adminButton");
+
+
+
+    /*
+    ========================================================
+    ESTADO
+    ========================================================
+    */
+
+
+    let currentUser = null;
+
+    let numbers = {};
+
+
+
+    /*
+    ========================================================
+    MENSAJES
+    ========================================================
+    */
+
+
+    function showMessage(
+        text,
+        type
+    ) {
+
+        message.textContent = text;
+
+        message.className =
+            "message " + type;
+
+
+        setTimeout(() => {
+
+            message.textContent = "";
+
+            message.className =
+                "message";
+
+        }, 5000);
+
+    }
+
+
+
+    /*
+    ========================================================
+    AUTENTICACIÓN ANÓNIMA
+    ========================================================
+    */
+
+
+    async function loginAnonymous() {
+
+        try {
+
+            await signInAnonymously(auth);
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            connection.textContent =
+                "🔴 Error de autenticación";
+
+            connection.className =
+                "connection offline";
+
+
+            showMessage(
+
+                "No se pudo conectar con Firebase.",
+
+                "error"
+
+            );
+
+        }
+
+    }
+
+
+
+    /*
+    ========================================================
+    AUTH STATE
+    ========================================================
+    */
+
+
+    onAuthStateChanged(
+        auth,
+        (user) => {
+
+            if (user) {
+
+                currentUser = user;
+
+
+                connection.textContent =
+                    "🟢 Conectado — sincronización activa";
+
+
+                connection.className =
+                    "connection online";
+
+
+                claimButton.disabled =
+                    false;
+
+            }
+
+        }
+    );
+
+
+
+    /*
+    ========================================================
+    LEER NÚMEROS EN TIEMPO REAL
+    ========================================================
+    */
+
+
+    onValue(
+        numbersRef,
+        (snapshot) => {
+
+            numbers =
+                snapshot.val() || {};
+
+
+            renderNumbers();
+
+        },
+
+        (error) => {
+
+            console.error(error);
+
+            showMessage(
+
+                "No se pudieron cargar los números.",
+
+                "error"
+
+            );
+
+        }
+    );
+
+
+
+    /*
+    ========================================================
+    MOSTRAR NÚMEROS
+    ========================================================
+    */
+
+
+    function renderNumbers() {
+
+        numbersContainer.innerHTML = "";
+
+
+        for (
+            let number = 1;
+            number <= 10;
+            number++
+        ) {
+
+            const button =
+                document.createElement("div");
+
+
+            button.className =
+                "number";
+
+
+            if (numbers[number]) {
+
+                button.classList.add(
+                    "taken"
+                );
+
+
+                button.innerHTML = `
+
+                    ${number}
+
+                    <span class="status">
+
+                        🔒
+                        ${escapeHtml(
+                            numbers[number].name
+                        )}
+
+                    </span>
+
+                `;
+
+            }
+
+            else {
+
+                button.classList.add(
+                    "available"
+                );
+
+
+                button.innerHTML = `
+
+                    ${number}
+
+                    <span class="status">
+
+                        DISPONIBLE
+
+                    </span>
+
+                `;
+
+            }
+
+
+            numbersContainer.appendChild(
+                button
+            );
+
+        }
+
+    }
+
+
+
+    /*
+    ========================================================
+    OBTENER NÚMERO ALEATORIO
+    ========================================================
+    */
+
+
+    async function claimRandomNumber() {
+
+
+        if (!currentUser) {
+
+            showMessage(
+
+                "Espera un momento mientras conectamos con Firebase.",
+
+                "error"
+
+            );
+
+            return;
+
+        }
+
+
+        const name =
+            nameInput.value.trim();
+
+
+        if (!name) {
+
+            showMessage(
+
+                "Primero escribe tu nombre.",
+
+                "error"
+
+            );
+
+            nameInput.focus();
+
+            return;
+
+        }
+
+
+        if (name.length < 2) {
+
+            showMessage(
+
+                "Escribe un nombre válido.",
+
+                "error"
+
+            );
+
+            return;
+
+        }
+
+
+        /*
+        ====================================================
+        BUSCAR NÚMEROS DISPONIBLES
+        ====================================================
+        */
+
+
+        const available = [];
+
+
+        for (
+            let i = 1;
+            i <= 10;
+            i++
+        ) {
+
+            if (!numbers[i]) {
+
+                available.push(i);
+
+            }
+
+        }
+
+
+        if (available.length === 0) {
+
+            showMessage(
+
+                "❌ Ya no quedan números disponibles.",
+
+                "error"
+
+            );
+
+            return;
+
+        }
+
+
+        /*
+        ====================================================
+        ELEGIR UNO ALEATORIAMENTE
+        ====================================================
+        */
+
+
+        const randomIndex =
+            Math.floor(
+                Math.random() *
+                available.length
+            );
+
+
+        const selectedNumber =
+            available[randomIndex];
+
+
+        const selectedRef =
+            ref(
+                database,
+                "numbers/" +
+                selectedNumber
+            );
+
+
+        claimButton.disabled =
+            true;
+
+
+        claimButton.textContent =
+            "🎲 Asignando...";
+
+
+        try {
+
+
+            /*
+            =================================================
+            TRANSACTION
+
+            Si otra persona tomó ese número
+            exactamente al mismo tiempo,
+            Firebase abortará esta escritura.
+            =================================================
+            */
+
+
+            const result =
+                await runTransaction(
+
+                    selectedRef,
+
+                    (currentData) => {
+
+
+                        if (
+                            currentData !== null
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        return {
+
+                            name:
+                                name,
+
+                            uid:
+                                currentUser.uid,
+
+                            timestamp:
+                                Date.now()
+
+                        };
+
+                    }
+
+                );
+
+
+            if (
+                result.committed
+            ) {
+
+
+                showMessage(
+
+                    `🎉 ${name}, tu número es el ${selectedNumber}.`,
+
+                    "success"
+
+                );
+
+
+                nameInput.value = "";
+
+
+            }
+
+            else {
+
+
+                showMessage(
+
+                    "Ese número fue tomado justo ahora. Inténtalo otra vez.",
+
+                    "error"
+
+                );
+
+            }
+
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+
+            showMessage(
+
+                "❌ No se pudo asignar el número.",
+
+                "error"
+
+            );
+
+        }
+
+
+        finally {
+
+            claimButton.disabled =
+                false;
+
+            claimButton.textContent =
+                "🎲 Obtener mi número";
+
+        }
+
+    }
+
+
+
+    /*
+    ========================================================
+    ADMINISTRADOR
+    ========================================================
+    */
+
+
+    adminButton.addEventListener(
+        "click",
+        async () => {
+
+
+            const email =
+                prompt(
+                    "📧 Correo del administrador:"
+                );
+
+
+            if (!email) {
+
+                return;
+
+            }
+
+
+            const password =
+                prompt(
+                    "🔐 Contraseña del administrador:"
+                );
+
+
+            if (!password) {
+
+                return;
+
+            }
+
+
+            try {
+
+
+                const credential =
+                    await signInWithEmailAndPassword(
+
+                        auth,
+
+                        email,
+
+                        password
+
+                    );
+
+
+                if (
+                    credential.user.email !==
+                    "marcojosue022010@gmail.com"
+                ) {
+
+                    showMessage(
+
+                        "❌ No tienes permisos de administrador.",
+
+                        "error"
+
+                    );
+
+                    await loginAnonymous();
+
+                    return;
+
+                }
+
+
+                const confirmation =
+                    confirm(
+
+                        "⚠️ ¿Seguro que quieres reiniciar TODOS los números?"
+
+                    );
+
+
+                if (!confirmation) {
+
+                    await loginAnonymous();
+
+                    return;
+
+                }
+
+
+                await remove(numbersRef);
+
+
+                showMessage(
+
+                    "✅ Todos los números fueron reiniciados.",
+
+                    "success"
+
+                );
+
+
+                /*
+                Volver a usuario anónimo
+                */
+
+                await loginAnonymous();
+
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+
+                showMessage(
+
+                    "❌ Correo o contraseña incorrectos.",
+
+                    "error"
+
+                );
+
+
+            }
+
+        }
+    );
+
+
+
+    /*
+    ========================================================
+    ESCAPAR HTML
+    ========================================================
+    */
+
+
+    function escapeHtml(text) {
+
+        const div =
+            document.createElement("div");
+
+
+        div.textContent =
+            text;
+
+
+        return div.innerHTML;
+
+    }
+
+
+
+    /*
+    ========================================================
+    INICIAR
+    ========================================================
+    */
+
+
+    claimButton.disabled =
+        true;
+
+
+    loginAnonymous();
+
+
+</script>
+
+
+</body>
+
+</html>
+```
